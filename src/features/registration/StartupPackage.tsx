@@ -1,22 +1,38 @@
-import { Link } from 'react-router-dom';
-import { Gift, ArrowUpRight, Zap, Lock } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Gift, ArrowUpRight, ArrowRight, Zap, Lock } from 'lucide-react';
 import { Card, Button, Badge, Switch } from '@/shared/ui';
 import { cn } from '@/shared/lib/cn';
 import { STARTUP_FEATURES, type StartupFeature } from '@/lib/registration';
+import { JOURNEY, isJourneyStepDone } from '@/lib/journey';
 import { DEMO_OWNER, YOUNG_ENTREPRENEUR_MAX_AGE } from '@/mock/business';
 import { useActivationStore } from '@/store/useActivationStore';
+import { useProgressStore } from '@/store/useProgressStore';
 
 /**
  * Стартовый пакет: карточки-тумблеры активации. Тумблеры с kind==='unlock'
  * мгновенно открывают соответствующий раздел в сайдбаре и на дашборде.
+ * После активации появляется «Далее» — ведёт к следующему шагу пути,
+ * чтобы пользователь не потерялся после сбора пакета.
  */
 export function StartupPackage() {
+  const navigate = useNavigate();
   const features = useActivationStore((s) => s.features);
   const toggleFeature = useActivationStore((s) => s.toggleFeature);
   const activateAll = useActivationStore((s) => s.activateAll);
   const unlockedCount = useActivationStore((s) => s.unlockedCount());
+  const registered = useActivationStore((s) => s.registered);
+  const packageActivated = useActivationStore((s) => s.isPackageActivated());
+  const steps = useProgressStore((s) => s.steps);
 
   const totalUnlockable = STARTUP_FEATURES.filter((f) => f.kind === 'unlock').length;
+  const allActive = unlockedCount === totalUnlockable;
+
+  // Следующий шаг — строго ВПЕРЁД по пути (первый незавершённый после пакета),
+  // чтобы «Далее» не уводила назад к онбордингу или оценке идеи.
+  const inputs = { steps, registered, packageActivated };
+  const packageIdx = JOURNEY.findIndex((st) => st.id === 'package');
+  const nextStep = JOURNEY.slice(packageIdx + 1).find((st) => !isJourneyStepDone(st, inputs));
+  const goNext = () => navigate(nextStep ? nextStep.to : '/dashboard');
 
   return (
     <div className="space-y-5">
@@ -45,11 +61,22 @@ export function StartupPackage() {
             </div>
           </div>
         </div>
-        <div className="mt-4">
-          <Button onClick={activateAll} disabled={unlockedCount === totalUnlockable}>
+        <div className="mt-4 flex flex-wrap items-center gap-2.5">
+          <Button
+            variant={packageActivated ? 'secondary' : 'primary'}
+            onClick={activateAll}
+            disabled={allActive}
+          >
             <Zap className="h-4 w-4" />
-            {unlockedCount === totalUnlockable ? 'Все разделы активированы' : 'Активировать всё'}
+            {allActive ? 'Все разделы активированы' : 'Активировать всё'}
           </Button>
+          {/* «Далее» появляется, как только пакет собран — путь продолжается */}
+          {packageActivated && (
+            <Button onClick={goNext}>
+              {nextStep ? `Далее: ${nextStep.label}` : 'Путь пройден — на дашборд'}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </Card>
 
@@ -64,6 +91,26 @@ export function StartupPackage() {
           />
         ))}
       </div>
+
+      {/* Дублирующий CTA внизу — после прокрутки тумблеров не нужно возвращаться наверх */}
+      {packageActivated && (
+        <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-[15px] font-semibold text-alfa-ink">
+              {nextStep ? `Следующий шаг пути — ${nextStep.label}` : 'Путь пройден — бизнес запущен'}
+            </div>
+            <div className="text-sm text-muted">
+              {nextStep
+                ? 'Пакет собран, разделы открыты. Продолжайте запуск.'
+                : 'Все шаги завершены — сводка на дашборде.'}
+            </div>
+          </div>
+          <Button onClick={goNext} className="shrink-0">
+            {nextStep ? 'Далее' : 'На дашборд'}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </Card>
+      )}
     </div>
   );
 }
