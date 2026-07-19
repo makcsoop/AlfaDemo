@@ -1,10 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Lightbulb, Store, Gavel, Smartphone, BarChart3, PackageCheck } from 'lucide-react';
+import { Lightbulb, Store, Gavel, Smartphone, BarChart3, PackageCheck } from 'lucide-react';
 import { PageHeader } from '@/features/_shared/PageHeader';
 import { JourneyBar } from '@/features/_shared/JourneyBar';
-import { Button, Card } from '@/shared/ui';
+import { Card } from '@/shared/ui';
 import { DEMO_BUSINESS } from '@/mock/business';
-import { useProgressStore } from '@/store/useProgressStore';
 
 const HIGHLIGHTS = [
   { icon: Lightbulb, title: 'Оценка идеи', text: 'Сценарии выручки и безопасный кредит' },
@@ -16,26 +14,12 @@ const HIGHLIGHTS = [
 ];
 
 export function OnboardingPage() {
-  const navigate = useNavigate();
-  const completeStep = useProgressStore((s) => s.complete);
-
-  const start = () => {
-    completeStep('/onboarding');
-    navigate('/dashboard');
-  };
-
   return (
     <div className="animate-fade-up">
       <PageHeader
         eyebrow="Добро пожаловать"
         title="Альфа-старт для предпринимателей"
-        description={`Проведём «${DEMO_BUSINESS.name}» от идеи до первых продаж — шаг за шагом, с аналитикой и без лишней бюрократии.`}
-        actions={
-          <Button onClick={start}>
-            Начать
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        }
+        description={`Проведём «${DEMO_BUSINESS.name}» от идеи до первых продаж — шаг за шагом, с аналитикой и без лишней бюрократии. Двигайтесь по шагам кнопкой «Далее» внизу.`}
       />
 
       <Card className="mb-6">

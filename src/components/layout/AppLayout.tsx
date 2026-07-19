@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileNav } from './MobileNav';
+import { JourneyNav } from '@/features/_shared/JourneyNav';
 
 /**
  * Каркас приложения: сайдбар слева (≥lg), шапка сверху, контент через <Outlet />.
@@ -15,8 +16,12 @@ export function AppLayout() {
         <Header />
         <MobileNav />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
-          <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-6 sm:py-8">
-            <Outlet />
+          <div className="mx-auto flex min-h-full w-full max-w-6xl flex-col px-4 sm:px-6 py-6 sm:py-8">
+            <div className="flex-1">
+              <Outlet />
+            </div>
+            {/* Единая навигация по шагам пути — всегда в одном месте (self-hides вне пути). */}
+            <JourneyNav />
           </div>
         </main>
       </div>

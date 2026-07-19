@@ -40,7 +40,7 @@ function ModeButton({
       aria-selected={active}
       onClick={() => onClick(value)}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+        'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium transition-colors sm:px-3',
         active
           ? value === 'demo'
             ? 'bg-alfa-red text-white shadow-sm'

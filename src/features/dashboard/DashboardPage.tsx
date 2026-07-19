@@ -66,7 +66,7 @@ export function DashboardPage() {
                   <div className="text-[15px] font-semibold text-alfa-ink">{nextStep.label}</div>
                 </div>
               </div>
-              <Button onClick={() => navigate(nextStep.to)}>
+              <Button className="w-full sm:w-auto" onClick={() => navigate(nextStep.to)}>
                 {ACTION_LABEL[nextStep.id] ?? 'Перейти'}
                 <ArrowRight className="h-4 w-4" />
               </Button>

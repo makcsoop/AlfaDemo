@@ -72,6 +72,12 @@ export function Stepper({ steps, current, completed, onStepClick, className }: S
           );
         })}
       </ol>
+      {/* На телефоне подписи шагов скрыты — показываем текущий шаг строкой. */}
+      {steps[current] && (
+        <div className="px-1 pb-1 pt-1.5 text-xs font-medium text-alfa-graphite sm:hidden">
+          Шаг {current + 1} из {steps.length} · {steps[current].title}
+        </div>
+      )}
     </div>
   );
 }

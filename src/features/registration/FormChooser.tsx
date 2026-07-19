@@ -73,19 +73,30 @@ export function FormChooser({ value, onChange, recommendation }: FormChooserProp
                 Подходит: {form.goodFor}
               </div>
 
+              {/* Статус выбора, а не вторая CTA: выбранная карточка уже
+                  подсвечена рамкой, плашка мягко это подтверждает. */}
               <div
                 className={cn(
-                  'mt-3.5 flex h-9 items-center justify-center rounded-lg text-sm font-medium transition-colors',
-                  selected ? 'bg-alfa-red text-white' : 'bg-bg text-alfa-graphite',
+                  'mt-auto pt-3.5',
                 )}
               >
-                {selected ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <Check className="h-4 w-4" /> Выбрано
-                  </span>
-                ) : (
-                  'Выбрать'
-                )}
+                <div
+                  className={cn(
+                    'flex h-10 w-full items-center justify-center gap-1.5 rounded-xl border text-sm font-semibold transition-colors',
+                    selected
+                      ? 'border-alfa-red/30 bg-alfa-red-50 text-alfa-red'
+                      : 'border-line bg-surface text-alfa-graphite',
+                  )}
+                >
+                  {selected ? (
+                    <>
+                      <Check className="h-4 w-4" strokeWidth={2.5} />
+                      Выбрано
+                    </>
+                  ) : (
+                    'Выбрать'
+                  )}
+                </div>
               </div>
             </button>
           );

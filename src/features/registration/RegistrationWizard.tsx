@@ -109,7 +109,7 @@ export function RegistrationWizard({ onDone }: { onDone: () => void }) {
           <p className="mt-3 text-sm text-muted">
             Заявление формируется автоматически. Подпишите мок-ЭЦП — в демо реальная подача не выполняется.
           </p>
-          <Button className="mt-4" onClick={doSign} loading={signing} disabled={signing}>
+          <Button className="mt-4 w-full sm:w-auto" onClick={doSign} loading={signing} disabled={signing}>
             {signing ? 'Подписываем…' : 'Подписать и отправить'}
             {!signing && <ShieldCheck className="h-4 w-4" />}
           </Button>
@@ -127,7 +127,7 @@ export function RegistrationWizard({ onDone }: { onDone: () => void }) {
             «{DEMO_BUSINESS.name}» оформлена как {form ? getBusinessForm(form).name : 'ИП'}. Расчётный счёт
             открыт. Осталось собрать стартовый пакет и включить нужные сервисы.
           </p>
-          <Button className="mt-5" onClick={onDone}>
+          <Button className="mt-5 w-full sm:w-auto" onClick={onDone}>
             Собрать стартовый пакет
             <ArrowRight className="h-4 w-4" />
           </Button>

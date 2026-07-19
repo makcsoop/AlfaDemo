@@ -23,17 +23,17 @@ export function JourneyBar({ className, clickable = true }: { className?: string
       <div className="mb-3 flex items-end justify-between">
         <div>
           <div className="text-sm text-muted">Путь запуска</div>
-          <div className="mt-0.5 text-2xl font-bold text-alfa-ink">
+          <div className="mt-0.5 text-xl font-bold text-alfa-ink sm:text-2xl">
             {doneCount} из {total} шагов
           </div>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold text-alfa-red">{percent}%</div>
+          <div className="text-xl font-bold text-alfa-red sm:text-2xl">{percent}%</div>
           <div className="text-xs text-muted">{percent === 100 ? 'путь пройден' : 'в процессе'}</div>
         </div>
       </div>
 
-      <div className="flex items-start gap-1.5">
+      <div className="flex items-start gap-1 sm:gap-1.5">
         {JOURNEY.map((step, i) => {
           const done = statuses[i];
           const active = i === currentIdx;
@@ -58,9 +58,10 @@ export function JourneyBar({ className, clickable = true }: { className?: string
                   {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : i + 1}
                 </span>
               </span>
+              {/* Подписи шагов только с sm: на телефоне 8 колонок текста не помещаются. */}
               <span
                 className={cn(
-                  'text-center text-[10px] leading-tight sm:text-[11px]',
+                  'hidden text-center text-[11px] leading-tight sm:block',
                   done || active ? 'text-alfa-graphite font-medium' : 'text-muted',
                 )}
               >
@@ -69,6 +70,13 @@ export function JourneyBar({ className, clickable = true }: { className?: string
             </button>
           );
         })}
+      </div>
+
+      {/* Мобильная подпись: какой шаг сейчас (вместо 8 подписей под кружками). */}
+      <div className="mt-2.5 text-center text-xs font-medium text-alfa-graphite sm:hidden">
+        {currentIdx === -1
+          ? 'Все шаги пройдены 🎉'
+          : `Шаг ${currentIdx + 1} из ${total} — ${JOURNEY[currentIdx].label}`}
       </div>
     </div>
   );

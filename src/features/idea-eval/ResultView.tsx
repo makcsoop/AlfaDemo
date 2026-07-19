@@ -112,7 +112,8 @@ export function ResultView({ result, onEdit, onRegister }: ResultViewProps) {
             </div>
           </div>
         </div>
-        <div className="flex shrink-0 gap-2">
+        {/* На телефоне кнопки в столбик на всю ширину — в строку не помещаются. */}
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:shrink-0 sm:flex-row">
           <Button variant="secondary" onClick={onEdit}>
             <Pencil className="h-4 w-4" />
             Скорректировать вводные
