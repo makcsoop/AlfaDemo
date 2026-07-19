@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { analyzeWithDeepSeek, hasApiKey, modelName } from './deepseek.js';
 
 /**
@@ -11,7 +13,13 @@ import { analyzeWithDeepSeek, hasApiKey, modelName } from './deepseek.js';
  *   • при отсутствии ключа/ошибке отвечаем 503 с машинно-читаемой причиной,
  *     а фронт откатывается на детерминированный фоллбэк (src/lib/fallback.ts).
  * Строгая zod-валидация ответа — на клиенте (src/api/analyze.ts).
+ *
+ * В production (NODE_ENV=production) также раздаёт собранный SPA из dist/.
  */
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const distPath = path.join(__dirname, '..', 'dist');
+const isProd = process.env.NODE_ENV === 'production';
 
 const app = express();
 app.use(cors());
@@ -53,8 +61,18 @@ app.post('/api/analyze', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+if (isProd) {
+  app.use(express.static(distPath, { index: false, maxAge: '1h' }));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'), (err) => {
+      if (err) next(err);
+    });
+  });
+}
+
+app.listen(PORT, '0.0.0.0', () => {
   console.log(
-    `[alfa-start] proxy на http://localhost:${PORT}  (DeepSeek key: ${hasApiKey() ? 'есть' : 'нет — фоллбэк на клиенте'})`,
+    `[alfa-start] ${isProd ? 'prod' : 'dev'} на http://0.0.0.0:${PORT}  (DeepSeek key: ${hasApiKey() ? 'есть' : 'нет — фоллбэк на клиенте'})`,
   );
 });
